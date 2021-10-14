@@ -1,7 +1,7 @@
 # NewspaperScrapper
 
 Project to extract title, text and images from newspapers.
-Actually this script only works with ("Elpais")[https://elpais.com], but I will add
+Actually this script only works with ["Elpais"](https://elpais.com), but I will add
 more newspapers in my free time.
 
 The script will create a folder (if not exists) for the newspaper,
