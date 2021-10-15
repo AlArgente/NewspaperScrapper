@@ -65,18 +65,14 @@ class ElPaisScrapper(NewsScrapper):
         for cnt_news_scrapped, link in enumerate(all_links_clean, start=1):
             # If the folder exists, we already has the news, and we only want
             # those news we don't have.
-            procesed_link = '_'.join(link.split('/'))
-            link_path = newspaper + '/' + procesed_link
+            link_path = self._get_link_path(link)
             if not os.path.isdir(link_path):
                 os.mkdir(link_path)
                 file_url = website+link
                 text, images_src, title = self.get_info_from_newspaper(file_url)
                 metadata = self.create_metadata_for_newspaper_url(title, file_url, len(images_src))
-                metadata_file = link_path + '/METADATA.txt'
-                with open(metadata_file, 'w') as f:
-                    f.write(metadata)
-                text_file = link_path + '/text_news.txt'
-                self._save_text(text, text_file)
+                self._save_metadata(metadata, link_path)
+                self._save_text(text, link_path)
                 if len(images_src) > 0:
                     self._save_images(images_src=images_src, img_folder=link_path)
             # To prevent a max connection count by timer and to not saturate the web.
@@ -104,3 +100,7 @@ class ElPaisScrapper(NewsScrapper):
         article = soup.find_all(name='div', class_='a_c clearfix')
         p_tags_text = [art_p_tags.getText()for art in article for art_p_tags in art.find_all('p')]
         return p_tags_text, images_src, title
+
+    def _get_link_path(self, link):
+        procesed_link = '_'.join(link.split('/'))
+        return self.name_ + '/' + procesed_link

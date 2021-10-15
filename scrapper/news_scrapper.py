@@ -116,24 +116,26 @@ class NewsScrapper(ABC):
             the images sources and the tittle of the news.
         """
 
-    def _save_metadata(self, metadata, filename):
+    def _save_metadata(self, metadata, file_path):
         """Function to save the metadata from a news article in a file.
 
         Args:
             metadata (str): Metadata information to be saved
-            filename (str): Name of the file where metadata is being writen.
+            file_path (str): Name of the file where metadata is being writen.
         """
-        with open(filename, 'w') as file:
+        metadata_file = file_path + '/METADATA.txt'
+        with open(metadata_file, 'w') as file:
             file.write(metadata)
 
-    def _save_text(self, text, filename):
+    def _save_text(self, text, file_path):
         """Function to save the news article text in a file.
 
         Args:
             text (str): News text to be saved.
-            filename (str): Name of the file where metadata is being writen.
+            file_path (str): Name of the file where metadata is being writen.
         """
-        with open(filename, 'w') as file:
+        text_file = file_path + '/text_news.txt'
+        with open(text_file, 'w') as file:
             for txt in text:
                 file.write(txt)
 
@@ -152,6 +154,19 @@ class NewsScrapper(ABC):
             # Download all the images
             cmd = ['wget', img_url, '-P', img_folder]
             subprocess.Popen(cmd).communicate()
+
+    @abstractmethod
+    def _get_link_path(self, link):
+        """Function that process the news url to create a path for it,
+        so the system can create an easy folder if the news isn't saved
+        on disk.
+
+        Args:
+            link (str): News url
+
+        Returns:
+            str: Path of the folder where the data will be saved.
+        """
 
     def pipeline(self):
         """Basic pipeline for extracting information from the newspaper website

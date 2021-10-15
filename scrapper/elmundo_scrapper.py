@@ -53,7 +53,6 @@ class ElMundoScrapper(NewsScrapper):
             information from the website.
         """
         newspaper = self.name_
-        website = self.url_
         # Get all the headers that contains the news
         headers = soup.find_all(name='header', class_='ue-c-cover-content__headline-group')
         # No need further processing as we have the full link of the news
@@ -61,18 +60,14 @@ class ElMundoScrapper(NewsScrapper):
         if not os.path.isdir(newspaper): # Crate a folder: newspaper/
             os.mkdir(newspaper)
         for cnt_news_scrapped, link in enumerate(all_links):
-            link_name = link.rpartition(website)[2]
-            link_name = '_'.join(link_name.split('/'))
-            link_path = newspaper + '/' + link_name
+            link_path = self._get_link_path(link)
             if not os.path.isdir(link_path):
                 # Create a folder: newspaper/link
                 os.mkdir(link_path)
                 text, images_src, title = self.get_info_from_newspaper(link)
                 metadata = self.create_metadata_for_newspaper_url(title, link, len(images_src))
-                metadata_file = link_path + '/METADATA.txt'
-                self._save_metadata(metadata, metadata_file)
-                text_file = link_path + '/text_news.txt'
-                self._save_text(text, text_file)
+                self._save_metadata(metadata, link_path)
+                self._save_text(text, link_path)
                 if len(images_src) > 0:
                     self._save_images(images_src=images_src, img_folder=link_path)
             # To prevent a max connection count by timer and to not saturate the web.
@@ -104,3 +99,18 @@ class ElMundoScrapper(NewsScrapper):
         article = soup.find_all(name='div', class_='ue-l-article__body ue-c-article__body')
         p_tags_text = [art_p_tags.getText() for art in article for art_p_tags in art.find_all('p')]
         return p_tags_text, images_src, title
+
+    def _get_link_path(self, link):
+        """Function that process the news url to create a path for it,
+        so the system can create an easy folder if the news isn't saved
+        on disk.
+
+        Args:
+            link (str): News url
+
+        Returns:
+            str: Path of the folder where the data will be saved.
+        """
+        link_name = link.rpartition(self.url_)[2]
+        link_name = '_'.join(link_name.split('/'))
+        return self.name_ + '/' + link_name
