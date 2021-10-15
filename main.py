@@ -40,7 +40,7 @@ from scrapper.news_factory import NewsFactory
 def print_available_newspaper_scrappers():
     """Function to print the available newspaper scrappers.
     """
-    newspapers = ['elpais']
+    newspapers = ['elpais', 'elmundo']
     print('The newspaper available are:')
     for i, newspaper in enumerate(newspapers, start=1):
         print(f'{i}.- {newspaper}')
@@ -50,9 +50,9 @@ def main():
     """Main function.
     """
     print_available_newspaper_scrappers()
-    # newspaper = input('Input the newspaper name you want to save the news: ')
+    newspaper = input('Input the newspaper name you want to save the news: ')
     # Load the newspaper scrapper.
-    newspaper = 'elpais' # As there is only one available, no input needed.
+    # newspaper = 'elpais' # As there is only one available, no input needed.
     factory = NewsFactory(newspaper)
     # Download all the news available at the newspaper site.
     factory.pipeline()

@@ -21,6 +21,7 @@
 only has to select one it's name.
 """
 
+from scrapper.elmundo_scrapper import ElMundoScrapper
 from scrapper.elpais_scrapper import ElPaisScrapper
 
 
@@ -47,6 +48,8 @@ class NewsFactory:
         """
         if self.__name == 'elpais':
             self.__scrapper = ElPaisScrapper(parser=parser)
+        elif self.__name == 'elmundo':
+            self.__scrapper = ElMundoScrapper(parser=parser)
         else:
             raise ValueError('No other newspaper available now. Sorry!')
 

@@ -27,3 +27,4 @@ from __future__ import print_function
 from scrapper.news_factory import NewsFactory
 from scrapper.news_scrapper import NewsScrapper
 from scrapper.elpais_scrapper import ElPaisScrapper
+from scrapper.elmundo_scrapper import ElMundoScrapper
