@@ -130,12 +130,12 @@ class NewsScrapper(ABC):
         """
         now = datetime.now()
         date_extracted = '_'.join(now.strftime('%D').split('/'))
-        metadata = ''
-        metadata += 'DATE EXTRACTED: ' + date_extracted + '\n'
-        metadata += 'TITLE: ' + title + '\n'
-        metadata += 'N_IMAGES: ' + str(n_images) + '\n'
-        metadata += 'URL: ' + url + '\n'
-        return metadata
+        return str(
+            f'DATE EXTRACTED: {date_extracted}\n'
+            f'TITLE: {title}\n'
+            f'N_IMAGES: {n_images}\n'
+            f'URL: {url}\n'
+        )
 
     def _save_metadata(self, metadata, file_path):
         """Function to save the metadata from a news article in a file.
@@ -185,6 +185,14 @@ class NewsScrapper(ABC):
                            self.__newsarticle_body_name, self.__newsarticle_body_class)
 
     def _init_bs4(self, url):
+        """Function to init a BeautifulSoup object
+
+        Args:
+            url (str): Url from newspaper to be scrapped
+
+        Returns:
+            BeautifulSoup object: BeautifulSoup object that has parsed the url
+        """
         response = requests.get(url)
         website_html = response.text
         return self.__bs4(website_html, self.__parser)
@@ -221,7 +229,7 @@ class NewsScrapper(ABC):
                 os.mkdir(link_path)
                 # Get news_url.
                 news_url = self._create_news_url(link)
-                # Get the information from the news article
+                # Get text, images url and article's title
                 text, images_src, title = self.get_info_from_newspaper(news_url, newsarticle_title_name, 
                                                                        newsarticle_title_class, newsarticle_body_name,
                                                                        newsarticle_body_class)

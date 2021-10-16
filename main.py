@@ -40,7 +40,7 @@ from scrapper.news_factory import NewsFactory
 def print_available_newspaper_scrappers():
     """Function to print the available newspaper scrappers.
     """
-    newspapers = ['elpais', 'elmundo']
+    newspapers = ['elpais', 'elmundo', 'abc']
     print('The newspaper available are:')
     for i, newspaper in enumerate(newspapers, start=1):
         print(f'{i}.- {newspaper}')
