@@ -74,7 +74,7 @@ class ElPaisScrapper(NewsScrapper):
         Returns:
             list: List with the urls cleaned to do an easy access to them.
         """
-        return [link for link in all_links if link[0] == '/']
+        return [link for link in all_links if len(link) > 0 if link[0] == '/']
 
     def _create_news_url(self, link):
         """Function to generate the full url of the news that is going to be parsed.
