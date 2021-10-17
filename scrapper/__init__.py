@@ -29,3 +29,4 @@ from scrapper.news_scrapper import NewsScrapper
 from scrapper.elpais_scrapper import ElPaisScrapper
 from scrapper.elmundo_scrapper import ElMundoScrapper
 from scrapper.abc_scrapper import ABCScrapper
+from scrapper.ideal_scrapper import IdealScrapper

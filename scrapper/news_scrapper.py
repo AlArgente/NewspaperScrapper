@@ -174,7 +174,10 @@ class NewsScrapper(ABC):
         for img_url in images_src:
             # Download all the images
             cmd = ['wget', img_url, '-P', img_folder]
-            subprocess.Popen(cmd).communicate()
+            try:
+                subprocess.Popen(cmd).communicate()
+            except TypeError:
+                continue
 
     def pipeline(self):
         """Basic pipeline for extracting information from the newspaper website
@@ -239,7 +242,7 @@ class NewsScrapper(ABC):
                 if len(images_src) > 0:
                     self._save_images(images_src=images_src, img_folder=link_path)
             # To prevent a max connection count by timer and to not saturate the web.
-            if cnt_news_scrapped % 30 == 0:
+            if cnt_news_scrapped % 30 == 0 and cnt_news_scrapped > 1:
                 print('Having a minute break.')
                 time.sleep(60)
             cnt_news_scrapped += 1
@@ -266,9 +269,9 @@ class NewsScrapper(ABC):
         except AttributeError:
             title = 'NoTitleAvailable'
         # Images src must be improved to just select those from the body.
-        images_src = [img.get('src') for img in soup.find_all('img')]
+        images_src = self._get_images_src(soup)
         article = soup.find_all(name=newsarticle_body_name, class_=newsarticle_body_class)
-        p_tags_text = [art_p_tags.getText() for art in article for art_p_tags in art.find_all('p')]
+        p_tags_text = self._get_paragraph_text(article)
         return p_tags_text, images_src, title
 
     def _create_and_save_metadata(self, title, link, n_images, file_path):
@@ -282,3 +285,23 @@ class NewsScrapper(ABC):
         """
         metadata = self.create_metadata_for_newspaper_url(title=title, url=link, n_images=n_images)
         self._save_metadata(metadata=metadata, file_path=file_path)
+
+    def _get_paragraph_text(self, article):
+        """Function to get the text from the news article.
+
+        Args:
+            article (beautiful soup object): bs4 object that contains all the paragraphs from 
+            a newspaper article.
+
+        Returns:
+            list: List containing all the paragraphs from the text.
+        """
+        return [art_p_tags.getText() for art in article for art_p_tags in art.find_all('p')]
+
+    def _get_images_src(self, soup):
+        """Function to get the images url from a news article to download them later.
+
+        Args:
+            soup (bs4 object): bs4 object initialized over a newspaper article.
+        """
+        return [img.get('src') for img in soup.find_all('img')]

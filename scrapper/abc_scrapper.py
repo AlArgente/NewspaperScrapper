@@ -17,7 +17,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Document that implement a crawler for ElPais newspaper
+"""Document that implement a crawler for ABC newspaper
 
 This work is done for research purpose. Please, use it with caution.
 

@@ -17,7 +17,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Document that implement a crawler for ElMundo newspaper
+"""Document that implement a crawler for Ideal newspaper
 
 This work is done for research purpose. Please, use it with caution.
 
@@ -25,10 +25,11 @@ Author: Alberto Argente del Castillo Garrido
 Github: AlArgente
 """
 
+import requests
 from scrapper.news_scrapper import NewsScrapper
 
 
-class ElMundoScrapper(NewsScrapper):
+class IdealScrapper(NewsScrapper):
     """Class that implements a crawler for ElMundo newspaper
 
     This class use the abstract class NewsScrapper as a base class,
@@ -36,14 +37,14 @@ class ElMundoScrapper(NewsScrapper):
     scrapper.
     """
     def __init__(self, parser='html.parser') -> None:
-        name = 'elmundo'
-        url = 'https://www.elmundo.es/'
-        header_name_news = 'header'
-        header_class_news = 'ue-c-cover-content__headline-group'
+        name = 'ideal'
+        url = 'https://www.ideal.es'
+        header_name_news = 'h2'
+        header_class_news = 'voc-title'
         newsarticle_title_name = 'h1'
-        newsarticle_title_class = 'ue-c-article__headline js-headline'
-        newsarticle_body_name = 'div'
-        newsarticle_body_class = 'ue-l-article__body ue-c-article__body'
+        newsarticle_title_class = 'voc-title'
+        newsarticle_body_name = 'p'
+        newsarticle_body_class = 'voc-paragraph'
         super().__init__(name, url, parser, header_name_news, header_class_news,
                          newsarticle_title_name, newsarticle_title_class, 
                          newsarticle_body_name, newsarticle_body_class)
@@ -59,9 +60,8 @@ class ElMundoScrapper(NewsScrapper):
         Returns:
             str: Path of the folder where the data will be saved.
         """
-        link_name = link.rpartition(self.url_)[2]
-        link_name = '_'.join(link_name.split('/'))
-        return self.name_ + '/' + link_name
+        procesed_link = '_'.join(link.split('/'))
+        return self.name_ + '/' + procesed_link
 
     def _clean_news_links(self, all_links):
         """Function to clean the urls obtained at the newspaper home page.
@@ -75,7 +75,7 @@ class ElMundoScrapper(NewsScrapper):
         Returns:
             list: List with the urls cleaned to do an easy access to them.
         """
-        return all_links
+        return [link for link in all_links if link[0] == '/']
 
     def _create_news_url(self, link):
         """Function to generate the full url of the news that is going to be parsed.
@@ -87,4 +87,22 @@ class ElMundoScrapper(NewsScrapper):
         Returns:
             str: Full url of the news
         """
-        return link
+        return self.url_ + link
+
+    def _init_bs4(self, url: str):
+        """Function to init a BeautifulSoup object
+        Overrided to be able to extract the data from the newspaper,
+        beacause of the need of headers.
+
+        Args:
+            url (str): Url from newspaper to be scrapped
+
+        Returns:
+            BeautifulSoup object: BeautifulSoup object that has parsed the url
+        """
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
+        source=requests.get(url, headers=headers).text
+        return self.bs4_(source, self.parser_)
+
+    def _get_paragraph_text(self, article):
+        return [art.getText() for art in article]
